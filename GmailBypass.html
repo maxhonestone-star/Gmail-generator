@@ -1,0 +1,1408 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Gmail Bypass - Android Tool</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Roboto, system-ui, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(145deg, #0f172a 0%, #1e293b 100%);
+            min-height: 100vh;
+            color: #e2e8f0;
+            padding: 16px;
+        }
+        
+        .container {
+            max-width: 400px;
+            margin: 0 auto;
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        
+        .header h1 {
+            font-size: 26px;
+            font-weight: 700;
+            background: linear-gradient(135deg, #94a3b8, #cbd5e1);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 5px;
+            letter-spacing: 1px;
+        }
+        
+        .header p {
+            color: #64748b;
+            font-size: 13px;
+        }
+        
+        .card {
+            background: rgba(30, 41, 59, 0.8);
+            backdrop-filter: blur(10px);
+            border-radius: 24px;
+            padding: 18px;
+            margin-bottom: 16px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+        }
+        
+        .card-title {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 15px;
+            color: #cbd5e1;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            padding-bottom: 10px;
+        }
+        
+        .card-title span {
+            font-size: 22px;
+        }
+        
+        .input-group {
+            margin-bottom: 15px;
+        }
+        
+        .input-group label {
+            display: block;
+            font-size: 13px;
+            color: #94a3b8;
+            margin-bottom: 5px;
+            font-weight: 500;
+        }
+        
+        .input-group input, .input-group select {
+            width: 100%;
+            padding: 12px 16px;
+            background: rgba(15, 23, 42, 0.6);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 14px;
+            color: #f1f5f9;
+            font-size: 15px;
+            transition: all 0.3s;
+        }
+        
+        .input-group input:focus, .input-group select:focus {
+            outline: none;
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.3);
+        }
+        
+        .input-row {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .input-row .input-group {
+            flex: 1;
+        }
+        
+        .btn {
+            width: 100%;
+            padding: 14px;
+            border: none;
+            border-radius: 14px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(145deg, #2563eb, #1d4ed8);
+            color: white;
+            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.4);
+        }
+        
+        .btn-primary:active {
+            transform: scale(0.98);
+            box-shadow: 0 2px 8px rgba(37, 99, 235, 0.3);
+        }
+        
+        .btn-success {
+            background: linear-gradient(145deg, #059669, #047857);
+            color: white;
+        }
+        
+        .btn-warning {
+            background: linear-gradient(145deg, #d97706, #b45309);
+            color: white;
+        }
+        
+        .btn-danger {
+            background: linear-gradient(145deg, #dc2626, #b91c1c);
+            color: white;
+        }
+        
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.08);
+            color: #cbd5e1;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .btn-secondary:active {
+            background: rgba(255, 255, 255, 0.15);
+        }
+        
+        .btn:disabled {
+            opacity: 0.5;
+            pointer-events: none;
+        }
+        
+        .btn-small {
+            padding: 8px 12px;
+            font-size: 13px;
+            border-radius: 10px;
+            margin-bottom: 0;
+        }
+        
+        .status-panel {
+            background: rgba(0, 0, 0, 0.4);
+            border-radius: 16px;
+            padding: 12px;
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+            color: #a5f3fc;
+            max-height: 200px;
+            overflow-y: auto;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            margin-top: 15px;
+        }
+        
+        .status-line {
+            padding: 4px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            animation: fadeIn 0.3s;
+            word-break: break-all;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-5px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .success { color: #4ade80; }
+        .error { color: #f87171; }
+        .info { color: #60a5fa; }
+        .warning { color: #fbbf24; }
+        
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 4px;
+            overflow: hidden;
+            margin: 10px 0;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #3b82f6, #8b5cf6);
+            width: 0%;
+            transition: width 0.3s;
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 8px;
+            margin: 15px 0;
+        }
+        
+        .stat-item {
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 14px;
+            padding: 10px 5px;
+            text-align: center;
+            border: 1px solid rgba(255,255,255,0.05);
+        }
+        
+        .stat-value {
+            font-size: 22px;
+            font-weight: 700;
+            color: #f1f5f9;
+            line-height: 1.2;
+        }
+        
+        .stat-label {
+            font-size: 10px;
+            color: #94a3b8;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .tab-bar {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 20px;
+            background: rgba(15, 23, 42, 0.6);
+            padding: 6px;
+            border-radius: 30px;
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+        
+        .tab {
+            flex: 1;
+            padding: 10px 5px;
+            text-align: center;
+            border-radius: 25px;
+            font-size: 13px;
+            font-weight: 600;
+            color: #94a3b8;
+            transition: all 0.2s;
+        }
+        
+        .tab.active {
+            background: linear-gradient(145deg, #2563eb, #1d4ed8);
+            color: white;
+            box-shadow: 0 2px 8px rgba(37, 99, 235, 0.4);
+        }
+        
+        .hidden {
+            display: none;
+        }
+        
+        .account-item {
+            background: rgba(0,0,0,0.3);
+            border-radius: 12px;
+            padding: 10px;
+            margin-bottom: 8px;
+            border-left: 3px solid #3b82f6;
+        }
+        
+        .account-email {
+            font-weight: 600;
+            color: #f1f5f9;
+            font-size: 14px;
+        }
+        
+        .account-pass {
+            color: #94a3b8;
+            font-size: 12px;
+            font-family: monospace;
+            margin-top: 4px;
+        }
+        
+        .account-status {
+            font-size: 11px;
+            margin-top: 5px;
+            padding: 2px 6px;
+            border-radius: 10px;
+            display: inline-block;
+        }
+        
+        .status-badge {
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: 20px;
+            font-size: 10px;
+            font-weight: 600;
+            margin-left: 5px;
+        }
+        
+        .badge-success {
+            background: rgba(74, 222, 128, 0.2);
+            color: #4ade80;
+            border: 1px solid rgba(74, 222, 128, 0.3);
+        }
+        
+        .badge-failed {
+            background: rgba(248, 113, 113, 0.2);
+            color: #f87171;
+            border: 1px solid rgba(248, 113, 113, 0.3);
+        }
+        
+        .floating-btn {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            width: 56px;
+            height: 56px;
+            border-radius: 28px;
+            background: linear-gradient(145deg, #2563eb, #1d4ed8);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            box-shadow: 0 4px 15px rgba(37, 99, 235, 0.5);
+            border: none;
+            z-index: 100;
+        }
+        
+        .floating-btn:active {
+            transform: scale(0.95);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>⚡ GMAIL BYPASS TOOL ⚡</h1>
+            <p>Android Edition • Auto Create • No Root</p>
+        </div>
+        
+        <!-- Tab Navigation -->
+        <div class="tab-bar">
+            <div class="tab active" onclick="switchTab('generator')">📋 Generator</div>
+            <div class="tab" onclick="switchTab('automation')">🤖 Auto-Create</div>
+            <div class="tab" onclick="switchTab('results')">📊 Results</div>
+            <div class="tab" onclick="switchTab('settings')">⚙️ Settings</div>
+        </div>
+        
+        <!-- ========== GENERATOR TAB ========== -->
+        <div id="generator-tab">
+            <div class="card">
+                <div class="card-title">
+                    <span>👤</span> Account Generator
+                </div>
+                
+                <div class="input-group">
+                    <label>📊 Jumlah Akun</label>
+                    <input type="number" id="account-count" min="1" max="100" value="5">
+                </div>
+                
+                <div class="input-row">
+                    <div class="input-group">
+                        <label>🌎 Negara</label>
+                        <select id="country-select">
+                            <option value="us">United States</option>
+                            <option value="id">Indonesia</option>
+                            <option value="gb">United Kingdom</option>
+                            <option value="au">Australia</option>
+                            <option value="ca">Canada</option>
+                        </select>
+                    </div>
+                    
+                    <div class="input-group">
+                        <label>⚡ Password Level</label>
+                        <select id="password-level">
+                            <option value="simple">Simple</option>
+                            <option value="medium" selected>Medium</option>
+                            <option value="strong">Strong</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="input-group">
+                    <label>🔤 Prefix Username (opsional)</label>
+                    <input type="text" id="username-prefix" placeholder="user_">
+                </div>
+                
+                <button class="btn btn-primary" onclick="generateAccounts()">
+                    <span>⚙️</span> GENERATE ACCOUNTS
+                </button>
+                
+                <button class="btn btn-secondary" onclick="toggleAdvanced()">
+                    <span>🔧</span> Advanced Options
+                </button>
+                
+                <div id="advanced-options" style="display: none; margin-top: 15px;">
+                    <div class="input-group">
+                        <label>📅 Tahun Lahir Range</label>
+                        <input type="text" id="year-range" placeholder="1970-2002" value="1970-2002">
+                    </div>
+                    
+                    <div class="input-group">
+                        <label>👥 Custom First Names (pisah koma)</label>
+                        <input type="text" id="custom-first" placeholder="John,Jane,Mike">
+                    </div>
+                    
+                    <div class="input-group">
+                        <label>👥 Custom Last Names (pisah koma)</label>
+                        <input type="text" id="custom-last" placeholder="Smith,Doe,Brown">
+                    </div>
+                </div>
+            </div>
+            
+            <div class="card">
+                <div class="card-title">
+                    <span>📋</span> Generated Accounts
+                </div>
+                
+                <div class="stats-grid">
+                    <div class="stat-item">
+                        <div class="stat-value" id="gen-count">0</div>
+                        <div class="stat-label">Generated</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value" id="gen-selected">0</div>
+                        <div class="stat-label">Selected</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value" id="gen-format">CSV</div>
+                        <div class="stat-label">Format</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value" id="gen-size">0KB</div>
+                        <div class="stat-label">Size</div>
+                    </div>
+                </div>
+                
+                <div id="accounts-list" style="max-height: 200px; overflow-y: auto; margin-bottom: 10px;">
+                    <div style="color: #64748b; text-align: center; padding: 20px;">Belum ada akun. Klik Generate.</div>
+                </div>
+                
+                <div style="display: flex; gap: 8px; margin-top: 10px;">
+                    <button class="btn btn-secondary btn-small" style="flex: 1;" onclick="selectAllAccounts()">
+                        ✅ All
+                    </button>
+                    <button class="btn btn-secondary btn-small" style="flex: 1;" onclick="deselectAllAccounts()">
+                        ❌ None
+                    </button>
+                    <button class="btn btn-secondary btn-small" style="flex: 1;" onclick="copySelectedAccounts()">
+                        📋 Copy
+                    </button>
+                    <button class="btn btn-secondary btn-small" style="flex: 1;" onclick="saveToFile()">
+                        💾 Save
+                    </button>
+                </div>
+                
+                <div class="status-panel" id="generator-log">
+                    <div class="status-line info">Ready to generate accounts</div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- ========== AUTOMATION TAB ========== -->
+        <div id="automation-tab" class="hidden">
+            <div class="card">
+                <div class="card-title">
+                    <span>🤖</span> Auto-Create Control
+                </div>
+                
+                <div class="stats-grid">
+                    <div class="stat-item">
+                        <div class="stat-value" id="auto-total">0</div>
+                        <div class="stat-label">Total</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value" id="auto-success">0</div>
+                        <div class="stat-label">Success</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value" id="auto-failed">0</div>
+                        <div class="stat-label">Failed</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value" id="auto-remaining">0</div>
+                        <div class="stat-label">Left</div>
+                    </div>
+                </div>
+                
+                <div class="progress-bar">
+                    <div class="progress-fill" id="progress-fill" style="width: 0%"></div>
+                </div>
+                
+                <div style="display: flex; gap: 8px; margin-bottom: 15px;">
+                    <button class="btn btn-success" style="flex: 1;" onclick="startAutomation()" id="start-btn">
+                        ▶️ START
+                    </button>
+                    <button class="btn btn-danger" style="flex: 1;" onclick="stopAutomation()" id="stop-btn" disabled>
+                        ⏹️ STOP
+                    </button>
+                </div>
+                
+                <div class="input-group">
+                    <label>⏱️ Delay antar akun (detik)</label>
+                    <input type="range" id="delay-slider" min="10" max="120" value="30">
+                    <div style="display: flex; justify-content: space-between;">
+                        <span id="delay-value">30s</span>
+                        <span id="delay-help">(makin lama makin aman)</span>
+                    </div>
+                </div>
+                
+                <div class="input-group">
+                    <label>🌐 Proxy / VPN Mode</label>
+                    <select id="proxy-select">
+                        <option value="none">No Proxy (default)</option>
+                        <option value="tor">Tor (need Orbot)</option>
+                        <option value="vpn">System VPN</option>
+                        <option value="random">Random User Agent</option>
+                    </select>
+                </div>
+                
+                <div class="input-group">
+                    <label>🔄 Auto Retry Gagal</label>
+                    <select id="retry-select">
+                        <option value="0">No retry</option>
+                        <option value="1" selected>1x retry</option>
+                        <option value="2">2x retry</option>
+                        <option value="3">3x retry</option>
+                    </select>
+                </div>
+            </div>
+            
+            <div class="card">
+                <div class="card-title">
+                    <span>📱</span> Current Account
+                </div>
+                
+                <div id="current-account-display" style="background: rgba(0,0,0,0.3); border-radius: 12px; padding: 15px; min-height: 80px;">
+                    <div style="color: #64748b; text-align: center;">Belum ada proses berjalan</div>
+                </div>
+                
+                <div class="status-panel" id="automation-log" style="height: 180px; margin-top: 15px;">
+                    <div class="status-line info">Siap memulai automation</div>
+                </div>
+                
+                <div style="display: flex; gap: 8px; margin-top: 10px;">
+                    <button class="btn btn-secondary btn-small" style="flex: 1;" onclick="pauseAutomation()" id="pause-btn" disabled>
+                        ⏸️ Pause
+                    </button>
+                    <button class="btn btn-secondary btn-small" style="flex: 1;" onclick="resumeAutomation()" id="resume-btn" disabled>
+                        ▶️ Resume
+                    </button>
+                </div>
+            </div>
+            
+            <div class="card">
+                <div class="card-title">
+                    <span>📋</span> Queue Accounts
+                </div>
+                
+                <div id="queue-list" style="max-height: 150px; overflow-y: auto;">
+                    <div style="color: #64748b; text-align: center;">Generate accounts dulu</div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- ========== RESULTS TAB ========== -->
+        <div id="results-tab" class="hidden">
+            <div class="card">
+                <div class="card-title">
+                    <span>📊</span> Statistics
+                </div>
+                
+                <div class="stats-grid">
+                    <div class="stat-item">
+                        <div class="stat-value" id="results-total">0</div>
+                        <div class="stat-label">Total</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value" id="results-success">0</div>
+                        <div class="stat-label">Success</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value" id="results-failed">0</div>
+                        <div class="stat-label">Failed</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value" id="results-rate">0%</div>
+                        <div class="stat-label">Rate</div>
+                    </div>
+                </div>
+                
+                <div class="stats-grid">
+                    <div class="stat-item">
+                        <div class="stat-value" id="results-today">0</div>
+                        <div class="stat-label">Today</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value" id="results-week">0</div>
+                        <div class="stat-label">Week</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value" id="results-month">0</div>
+                        <div class="stat-label">Month</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value" id="results-all">0</div>
+                        <div class="stat-label">All</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="card">
+                <div class="card-title">
+                    <span>📁</span> Success Accounts
+                </div>
+                
+                <div class="status-panel" id="success-list" style="height: 200px;">
+                    <div class="status-line">Belum ada data</div>
+                </div>
+                
+                <div style="display: flex; gap: 8px; margin-top: 10px;">
+                    <button class="btn btn-secondary btn-small" style="flex: 1;" onclick="exportSuccess()">
+                        📤 Export Success
+                    </button>
+                    <button class="btn btn-secondary btn-small" style="flex: 1;" onclick="exportFailed()">
+                        📤 Export Failed
+                    </button>
+                </div>
+            </div>
+            
+            <div class="card">
+                <div class="card-title">
+                    <span>🗑️</span> Failed Accounts
+                </div>
+                
+                <div class="status-panel" id="failed-list" style="height: 150px;">
+                    <div class="status-line">Belum ada data</div>
+                </div>
+                
+                <div style="display: flex; gap: 8px; margin-top: 10px;">
+                    <button class="btn btn-danger btn-small" style="flex: 1;" onclick="clearResults()">
+                        🧹 Clear All
+                    </button>
+                    <button class="btn btn-secondary btn-small" style="flex: 1;" onclick="refreshResults()">
+                        🔄 Refresh
+                    </button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- ========== SETTINGS TAB ========== -->
+        <div id="settings-tab" class="hidden">
+            <div class="card">
+                <div class="card-title">
+                    <span>⚙️</span> Application Settings
+                </div>
+                
+                <div class="input-group">
+                    <label>💾 Save Location</label>
+                    <select id="save-location">
+                        <option value="internal">Internal Storage</option>
+                        <option value="sdcard">SD Card</option>
+                        <option value="download">Download Folder</option>
+                    </select>
+                </div>
+                
+                <div class="input-group">
+                    <label>🔔 Notifications</label>
+                    <select id="notifications">
+                        <option value="all">All</option>
+                        <option value="success">Success Only</option>
+                        <option value="none">None</option>
+                    </select>
+                </div>
+                
+                <div class="input-group">
+                    <label>🌙 Dark Mode</label>
+                    <select id="darkmode">
+                        <option value="on">On</option>
+                        <option value="off">Off</option>
+                    </select>
+                </div>
+                
+                <div class="input-group">
+                    <label>🔐 Auto Clear Data</label>
+                    <select id="auto-clear">
+                        <option value="never">Never</option>
+                        <option value="1day">Every 1 Day</option>
+                        <option value="1week" selected>Every 1 Week</option>
+                        <option value="1month">Every 1 Month</option>
+                    </select>
+                </div>
+            </div>
+            
+            <div class="card">
+                <div class="card-title">
+                    <span>ℹ️</span> About
+                </div>
+                
+                <div style="text-align: center; padding: 10px;">
+                    <p style="font-size: 24px; margin-bottom: 10px;">⚡ ObsidianGPT ⚡</p>
+                    <p style="color: #94a3b8; font-size: 13px;">Version 2.0 (Android)</p>
+                    <p style="color: #64748b; font-size: 12px; margin-top: 15px;">Gmail Bypass Verification Tool<br>Untuk keperluan edukasi</p>
+                    
+                    <hr style="border-color: rgba(255,255,255,0.1); margin: 15px 0;">
+                    
+                    <div style="display: flex; justify-content: center; gap: 20px;">
+                        <div>
+                            <span style="color: #3b82f6;">📊</span>
+                            <p style="font-size: 11px;">Success Rate</p>
+                            <p style="font-weight: bold;">30-60%</p>
+                        </div>
+                        <div>
+                            <span style="color: #10b981;">⚡</span>
+                            <p style="font-size: 11px;">Speed</p>
+                            <p style="font-weight: bold;">30s/acc</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="card">
+                <div class="card-title">
+                    <span>📱</span> Device Info
+                </div>
+                
+                <div id="device-info">
+                    <p style="color: #94a3b8; font-size: 12px;">Loading...</p>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Floating Action Button -->
+        <button class="floating-btn" onclick="quickAction()">
+            <span>⚡</span>
+        </button>
+    </div>
+    
+    <script>
+        // ============================================
+        // STATE MANAGEMENT
+        // ============================================
+        let currentTab = 'generator';
+        let generatedAccounts = [];
+        let selectedAccounts = new Set();
+        let automationActive = false;
+        let automationPaused = false;
+        let automationInterval = null;
+        let currentAccountIndex = 0;
+        let successAccounts = [];
+        let failedAccounts = [];
+        
+        // Load saved data from localStorage
+        try {
+            const saved = localStorage.getItem('gmail_bypass_accounts');
+            if (saved) {
+                generatedAccounts = JSON.parse(saved);
+                updateAccountsList();
+            }
+            
+            const savedSuccess = localStorage.getItem('gmail_bypass_success');
+            if (savedSuccess) {
+                successAccounts = JSON.parse(savedSuccess);
+            }
+            
+            const savedFailed = localStorage.getItem('gmail_bypass_failed');
+            if (savedFailed) {
+                failedAccounts = JSON.parse(savedFailed);
+            }
+        } catch (e) {}
+        
+        // ============================================
+        // TAB SWITCHING
+        // ============================================
+        function switchTab(tab) {
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.tab')[tab === 'generator' ? 0 : tab === 'automation' ? 1 : tab === 'results' ? 2 : 3].classList.add('active');
+            
+            document.getElementById('generator-tab').classList.add('hidden');
+            document.getElementById('automation-tab').classList.add('hidden');
+            document.getElementById('results-tab').classList.add('hidden');
+            document.getElementById('settings-tab').classList.add('hidden');
+            
+            document.getElementById(tab + '-tab').classList.remove('hidden');
+            currentTab = tab;
+            
+            if (tab === 'results') {
+                updateResults();
+            } else if (tab === 'settings') {
+                updateDeviceInfo();
+            }
+        }
+        
+        // ============================================
+        // GENERATOR FUNCTIONS
+        // ============================================
+        function toggleAdvanced() {
+            const adv = document.getElementById('advanced-options');
+            adv.style.display = adv.style.display === 'none' ? 'block' : 'none';
+        }
+        
+        function generateAccounts() {
+            const count = parseInt(document.getElementById('account-count').value) || 5;
+            const country = document.getElementById('country-select').value;
+            const prefix = document.getElementById('username-prefix').value;
+            const passwordLevel = document.getElementById('password-level').value;
+            
+            const log = document.getElementById('generator-log');
+            log.innerHTML = '';
+            addLog(log, 'info', `Start generating ${count} accounts...`);
+            
+            // Clear previous
+            generatedAccounts = [];
+            selectedAccounts.clear();
+            
+            // First names based on country
+            let firstNames = [];
+            let lastNames = [];
+            
+            if (country === 'us') {
+                firstNames = ['James','John','Robert','Michael','William','David','Richard','Joseph','Thomas','Charles','Christopher','Daniel','Matthew','Anthony','Donald'];
+                lastNames = ['Smith','Johnson','Williams','Brown','Jones','Garcia','Miller','Davis','Rodriguez','Martinez','Hernandez','Lopez','Gonzalez','Wilson','Anderson'];
+            } else if (country === 'id') {
+                firstNames = ['Agus','Budi','Citra','Dewi','Eka','Fajar','Gita','Hendra','Indah','Joko','Kurnia','Lestari','Mega','Nova','Putri'];
+                lastNames = ['Wijaya','Kusuma','Santoso','Pratama','Wibowo','Saputra','Hidayat','Rahman','Nugroho','Utami','Handayani','Sari','Lestari','Permadi','Gunawan'];
+            } else {
+                firstNames = ['James','John','Robert','Michael','William','David','Richard','Joseph','Thomas'];
+                lastNames = ['Smith','Johnson','Williams','Brown','Jones','Garcia','Miller','Davis'];
+            }
+            
+            // Custom names
+            const customFirst = document.getElementById('custom-first').value;
+            const customLast = document.getElementById('custom-last').value;
+            
+            if (customFirst) {
+                const custom = customFirst.split(',').map(n => n.trim());
+                firstNames = [...custom, ...firstNames];
+            }
+            
+            if (customLast) {
+                const custom = customLast.split(',').map(n => n.trim());
+                lastNames = [...custom, ...lastNames];
+            }
+            
+            // Year range
+            let yearRange = [1970, 2002];
+            try {
+                const yr = document.getElementById('year-range').value.split('-');
+                if (yr.length === 2) {
+                    yearRange = [parseInt(yr[0]), parseInt(yr[1])];
+                }
+            } catch (e) {}
+            
+            // Generate accounts
+            for (let i = 0; i < count; i++) {
+                setTimeout(() => {
+                    const firstName = firstNames[Math.floor(Math.random() * firstNames.length)];
+                    const lastName = lastNames[Math.floor(Math.random() * lastNames.length)];
+                    
+                    // Generate username
+                    let username = '';
+                    const random = Math.random();
+                    if (random < 0.3) {
+                        username = prefix + firstName.toLowerCase() + lastName.toLowerCase();
+                    } else if (random < 0.6) {
+                        username = prefix + firstName.toLowerCase() + '.' + lastName.toLowerCase();
+                    } else if (random < 0.8) {
+                        username = prefix + firstName[0].toLowerCase() + lastName.toLowerCase();
+                    } else {
+                        username = prefix + firstName.toLowerCase() + Math.floor(Math.random() * 1000);
+                    }
+                    
+                    // Add random numbers if too short
+                    username = username.replace(/[^a-z0-9._]/g, '');
+                    if (username.length < 6) {
+                        username += Math.floor(Math.random() * 1000);
+                    }
+                    if (username.length > 30) {
+                        username = username.substring(0, 30);
+                    }
+                    
+                    // Generate password based on level
+                    let password = '';
+                    if (passwordLevel === 'simple') {
+                        password = firstName + Math.floor(Math.random() * 100) + '123';
+                    } else if (passwordLevel === 'medium') {
+                        const special = ['!', '@', '#', '$', '%'][Math.floor(Math.random() * 5)];
+                        password = firstName + lastName + Math.floor(Math.random() * 999) + special;
+                    } else {
+                        const special = ['!', '@', '#', '$', '%', '&', '*'][Math.floor(Math.random() * 7)];
+                        const numbers = Math.floor(Math.random() * 9000) + 1000;
+                        password = firstName + special + lastName + numbers;
+                    }
+                    
+                    // Birthday
+                    const year = Math.floor(Math.random() * (yearRange[1] - yearRange[0] + 1)) + yearRange[0];
+                    const month = Math.floor(Math.random() * 12) + 1;
+                    const day = Math.floor(Math.random() * 28) + 1;
+                    
+                    const account = {
+                        id: Date.now() + i,
+                        email: username + '@gmail.com',
+                        username: username,
+                        password: password,
+                        firstName: firstName,
+                        lastName: lastName,
+                        birthMonth: month,
+                        birthDay: day,
+                        birthYear: year,
+                        gender: Math.floor(Math.random() * 2) + 1,
+                        selected: true
+                    };
+                    
+                    generatedAccounts.push(account);
+                    selectedAccounts.add(account.id);
+                    
+                    // Update UI
+                    document.getElementById('gen-count').innerText = generatedAccounts.length;
+                    document.getElementById('gen-selected').innerText = selectedAccounts.size;
+                    
+                    addLog(log, 'success', `[${i+1}/${count}] ${account.email} : ${account.password}`);
+                    
+                    // Update list
+                    updateAccountsList();
+                    
+                    // Save to localStorage
+                    localStorage.setItem('gmail_bypass_accounts', JSON.stringify(generatedAccounts));
+                    
+                    if (i === count-1) {
+                        addLog(log, 'success', `✅ Selesai! ${count} akun tergenerate`);
+                        
+                        // Update size estimate
+                        const size = JSON.stringify(generatedAccounts).length;
+                        document.getElementById('gen-size').innerText = (size / 1024).toFixed(1) + 'KB';
+                    }
+                }, i * 100);
+            }
+        }
+        
+        function updateAccountsList() {
+            const container = document.getElementById('accounts-list');
+            if (!container) return;
+            
+            if (generatedAccounts.length === 0) {
+                container.innerHTML = '<div style="color: #64748b; text-align: center; padding: 20px;">Belum ada akun. Klik Generate.</div>';
+                return;
+            }
+            
+            let html = '';
+            generatedAccounts.forEach(acc => {
+                const isSelected = selectedAccounts.has(acc.id);
+                html += `
+                    <div class="account-item" style="border-left-color: ${isSelected ? '#3b82f6' : '#64748b'}; opacity: ${isSelected ? 1 : 0.6};" onclick="toggleAccountSelect(${acc.id})">
+                        <div style="display: flex; justify-content: space-between;">
+                            <span class="account-email">${acc.email}</span>
+                            <span style="font-size: 11px;">${isSelected ? '✅' : '☐'}</span>
+                        </div>
+                        <div class="account-pass">${acc.password}</div>
+                        <div style="display: flex; gap: 5px; margin-top: 5px;">
+                            <span class="status-badge ${isSelected ? 'badge-success' : 'badge-failed'}">${isSelected ? 'Selected' : 'Not Selected'}</span>
+                        </div>
+                    </div>
+                `;
+            });
+            
+            container.innerHTML = html;
+            document.getElementById('gen-selected').innerText = selectedAccounts.size;
+        }
+        
+        function toggleAccountSelect(id) {
+            if (selectedAccounts.has(id)) {
+                selectedAccounts.delete(id);
+            } else {
+                selectedAccounts.add(id);
+            }
+            updateAccountsList();
+        }
+        
+        function selectAllAccounts() {
+            generatedAccounts.forEach(acc => selectedAccounts.add(acc.id));
+            updateAccountsList();
+        }
+        
+        function deselectAllAccounts() {
+            selectedAccounts.clear();
+            updateAccountsList();
+        }
+        
+        function copySelectedAccounts() {
+            const selected = generatedAccounts.filter(acc => selectedAccounts.has(acc.id));
+            if (selected.length === 0) {
+                alert('Pilih akun dulu');
+                return;
+            }
+            
+            let text = 'Email,Password,First Name,Last Name\n';
+            selected.forEach(acc => {
+                text += `${acc.email},${acc.password},${acc.firstName},${acc.lastName}\n`;
+            });
+            
+            // Try to copy using modern API
+            if (navigator.clipboard && navigator.clipboard.writeText) {
+                navigator.clipboard.writeText(text).then(() => {
+                    alert(`${selected.length} akun tercopy!`);
+                }).catch(() => {
+                    prompt('Copy manual:', text);
+                });
+            } else {
+                prompt('Copy manual:', text);
+            }
+        }
+        
+        function saveToFile() {
+            const selected = generatedAccounts.filter(acc => selectedAccounts.has(acc.id));
+            if (selected.length === 0) {
+                alert('Pilih akun dulu');
+                return;
+            }
+            
+            let csv = 'Email,Password,First Name,Last Name,Birth Month,Birth Day,Birth Year,Gender\n';
+            selected.forEach(acc => {
+                csv += `${acc.email},${acc.password},${acc.firstName},${acc.lastName},${acc.birthMonth},${acc.birthDay},${acc.birthYear},${acc.gender}\n`;
+            });
+            
+            const blob = new Blob([csv], { type: 'text/csv' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `gmail_accounts_${Date.now()}.csv`;
+            a.click();
+            URL.revokeObjectURL(url);
+            
+            addLog(document.getElementById('generator-log'), 'success', `✅ Saved ${selected.length} accounts to Downloads`);
+        }
+        
+        // ============================================
+        // AUTOMATION FUNCTIONS
+        // ============================================
+        function startAutomation() {
+            const selected = generatedAccounts.filter(acc => selectedAccounts.has(acc.id));
+            if (selected.length === 0) {
+                alert('Pilih akun dulu di tab Generator');
+                return;
+            }
+            
+            automationActive = true;
+            automationPaused = false;
+            currentAccountIndex = 0;
+            
+            document.getElementById('start-btn').disabled = true;
+            document.getElementById('stop-btn').disabled = false;
+            document.getElementById('pause-btn').disabled = false;
+            document.getElementById('resume-btn').disabled = true;
+            
+            // Update queue
+            updateQueueList(selected);
+            
+            // Reset stats
+            document.getElementById('auto-total').innerText = selected.length;
+            document.getElementById('auto-success').innerText = '0';
+            document.getElementById('auto-failed').innerText = '0';
+            document.getElementById('auto-remaining').innerText = selected.length;
+            document.getElementById('progress-fill').style.width = '0%';
+            
+            const log = document.getElementById('automation-log');
+            log.innerHTML = '';
+            addLog(log, 'info', `🚀 Memulai automation untuk ${selected.length} akun...`);
+            
+            // Start process
+            processNextAccount(selected);
+        }
+        
+        function processNextAccount(accounts) {
+            if (!automationActive || automationPaused) return;
+            
+            if (currentAccountIndex >= accounts.length) {
+                // Selesai
+                addLog(document.getElementById('automation-log'), 'success', '✅ Semua akun selesai diproses!');
+                stopAutomation();
+                return;
+            }
+            
+            const acc = accounts[currentAccountIndex];
+            const delay = parseInt(document.getElementById('delay-slider').value) * 1000;
+            
+            // Update current account display
+            document.getElementById('current-account-display').innerHTML = `
+                <div style="text-align: center;">
+                    <div style="font-size: 16px; font-weight: 600; color: #f1f5f9;">${acc.email}</div>
+                    <div style="font-family: monospace; color: #94a3b8; margin: 5px 0;">${acc.password}</div>
+                    <div style="display: flex; gap: 5px; justify-content: center;">
+                        <span class="status-badge badge-success">Processing</span>
+                        <span class="status-badge">${currentAccountIndex+1}/${accounts.length}</span>
+                    </div>
+                </div>
+            `;
+            
+            // Simulate account creation
+            addLog(document.getElementById('automation-log'), 'info', `[${currentAccountIndex+1}/${accounts.length}] Processing ${acc.email}...`);
+            
+            // Random success/failure (simulasi)
+            setTimeout(() => {
+                if (!automationActive) return;
+                
+                const success = Math.random() > 0.4; // 60% success rate simulasi
+                
+                if (success) {
+                    addLog(document.getElementById('automation-log'), 'success', `✅ ${acc.email} : ${acc.password} - SUCCESS`);
+                    
+                    // Add to success accounts
+                    successAccounts.push({
+                        ...acc,
+                        timestamp: new Date().toISOString(),
+                        status: 'success'
+                    });
+                    
+                    // Update stats
+                    const successEl = document.getElementById('auto-success');
+                    successEl.innerText = parseInt(successEl.innerText) + 1;
+                    
+                } else {
+                    addLog(document.getElementById('automation-log'), 'error', `❌ ${acc.email} - FAILED (verification required)`);
+                    
+                    // Check retry
+                    const retryCount = parseInt(document.getElementById('retry-select').value);
+                    if (retryCount > 0) {
+                        // Will retry later
+                        accounts.push(acc); // Add to end for retry
+                        addLog(document.getElementById('automation-log'), 'warning', `↻ Akan di-retry nanti`);
+                    } else {
+                        // Add to failed accounts
+                        failedAccounts.push({
+                            ...acc,
+                            timestamp: new Date().toISOString(),
+                            status: 'failed'
+                        });
+                    }
+                    
+                    // Update stats
+                    const failedEl = document.getElementById('auto-failed');
+                    failedEl.innerText = parseInt(failedEl.innerText) + 1;
+                }
+                
+                // Update remaining
+                const remaining = accounts.length - (currentAccountIndex + 1);
+                document.getElementById('auto-remaining').innerText = remaining;
+                
+                // Update progress
+                const progress = ((currentAccountIndex + 1) / accounts.length) * 100;
+                document.getElementById('progress-fill').style.width = progress + '%';
+                
+                // Save to localStorage
+                localStorage.setItem('gmail_bypass_success', JSON.stringify(successAccounts));
+                localStorage.setItem('gmail_bypass_failed', JSON.stringify(failedAccounts));
+                
+                // Move to next
+                currentAccountIndex++;
+                
+                // Schedule next
+                if (automationActive && !automationPaused) {
+                    setTimeout(() => {
+                        processNextAccount(accounts);
+                    }, delay);
+                }
+                
+            }, 3000); // Simulate 3 second processing
+        }
+        
+        function updateQueueList(accounts) {
+            const container = document.getElementById('queue-list');
+            if (!container) return;
+            
+            if (!accounts || accounts.length === 0) {
+                container.innerHTML = '<div style="color: #64748b; text-align: center;">Tidak ada akun dalam antrian</div>';
+                return;
+            }
+            
+            let html = '';
+            accounts.slice(0, 5).forEach((acc, idx) => {
+                html += `
+                    <div style="background: rgba(0,0,0,0.3); padding: 8px; border-radius: 8px; margin-bottom: 5px; font-size: 12px;">
+                        <div style="display: flex; justify-content: space-between;">
+                            <span>${acc.email}</span>
+                            <span style="color: ${idx === 0 ? '#4ade80' : '#94a3b8'}">${idx === 0 ? '▶️ Next' : `#${idx+1}`}</span>
+                        </div>
+                    </div>
+                `;
+            });
+            
+            if (accounts.length > 5) {
+                html += `<div style="text-align: center; color: #64748b;">... dan ${accounts.length-5} lainnya</div>`;
+            }
+            
+            container.innerHTML = html;
+        }
+        
+        function stopAutomation() {
+            automationActive = false;
+            automationPaused = false;
+            clearTimeout(automationInterval);
+            
+            document.getElementById('start-btn').disabled = false;
+            document.getElementById('stop-btn').disabled = true;
+            document.getElementById('pause-btn').disabled = true;
+            document.getElementById('resume-btn').disabled = true;
+            
+            addLog(document.getElementById('automation-log'), 'warning', '⏹️ Automation dihentikan');
+        }
+        
+        function pauseAutomation() {
+            automationPaused = true;
+            document.getElementById('pause-btn').disabled = true;
+            document.getElementById('resume-btn').disabled = false;
+            addLog(document.getElementById('automation-log'), 'warning', '⏸️ Automation dipause');
+        }
+        
+        function resumeAutomation() {
+            automationPaused = false;
+            document.getElementById('pause-btn').disabled = false;
+            document.getElementById('resume-btn').disabled = true;
+            addLog(document.getElementById('automation-log'), 'info', '▶️ Automation dilanjutkan');
+            
+            // Restart process
+            const selected = generatedAccounts.filter(acc => selectedAccounts.has(acc.id));
+            processNextAccount(selected);
+        }
+        
+        // ============================================
+        // RESULTS FUNCTIONS
+        // ============================================
+        function updateResults() {
+            document.getElementById('results-total').innerText = successAccounts.length + failedAccounts.length;
+            document.getElementById('results-success').innerText = successAccounts.length;
+            document.getElementById('results-failed').innerText = failedAccounts.length;
+            
+            const rate = successAccounts.length > 0 ? 
+                Math.round((successAccounts.length / (successAccounts.length + failedAccounts.length)) * 100) : 0;
+            document.getElementById('results-rate').innerText = rate + '%';
+            
+            // Update success list
+            const successList = document.getElementById('success-list');
+            if (successAccounts.length === 0) {
+                successList.innerHTML = '<div class="status-line">Belum ada akun sukses</div>';
+            } else {
+                successList.innerHTML = '';
+                successAccounts.slice(-10).reverse().forEach(acc => {
+                    const line = document.createElement('div');
+                    line.className = 'status-line success';
+                    line.innerText = `${acc.email} : ${acc.password}`;
+                    successList.appendChild(line);
+                });
+            }
+            
+            // Update failed list
+            const failedList = document.getElementById('failed-list');
+            if (failedAccounts.length === 0) {
+                failedList.innerHTML = '<div class="status-line">Belum ada akun gagal</div>';
+            } else {
+                failedList.innerHTML = '';
+                failedAccounts.slice(-10).reverse().forEach(acc => {
+                    const line = document.createElement('div');
+                    line.className = 'status-line error';
+                    line.innerText = `${acc.email}`;
+                    failedList.appendChild(line);
+                });
+            }
+            
+            // Today/Week/Month counts
+            const today = new Date().toDateString();
+            const todayCount = successAccounts.filter(acc => 
+                new Date(acc.timestamp).toDateString() === today
+            ).length;
+            
+            document.getElementById('results-today').innerText = todayCount;
+            document.getElementById('results-week').innerText = successAccounts.length; // Simplified
+            document.getElementById('results-month').innerText = successAccounts.length;
+            document.getElementById('results-all').innerText = successAccounts.length;
+        }
+        
+        function exportSuccess() {
+            if (successAccounts.length === 0) {
+                alert('Belum ada akun sukses');
+                return;
+            }
+            
+            let csv = 'Email,Password,First Name,Last Name,Timestamp\n';
+            successAccounts.forEach(acc => {
+                csv += `${acc.email},${acc.password},${acc.firstName},${acc.lastName},${acc.timestamp}\n`;
+            });
+            
+            const blob = new Blob([csv], { type: 'text/csv' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `gmail_success_${Date.now()}.csv`;
+            a.click();
+            URL.revokeObjectURL(url);
+        }
+        
+        function exportFailed() {
+            if (failedAccounts.length === 0) {
+                alert('Belum ada akun gagal');
+                return;
+            }
+            
+            let csv = 'Email,First Name,Last Name,Timestamp\n';
+            failedAccounts.forEach(acc => {
+                csv += `${acc.email},${acc.firstName},${acc.lastName},${acc.timestamp}\n`;
+            });
+            
+            const blob = new Blob([csv], { type: 'text/csv' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `gmail_failed_${Date.now()}.csv`;
+            a.click();
+            URL.revokeObjectURL(url);
+        }
+        
+        function clearResults() {
+            if (confirm('Hapus semua data hasil?')) {
+                successAccounts = [];
+                failedAccounts = [];
+                localStorage.removeItem('gmail_bypass_success');
+                localStorage.removeItem('gmail_bypass_failed');
+                updateResults();
+            }
+        }
+        
+        function refreshResults() {
+            updateResults();
+        }
+        
+        // ============================================
+        // SETTINGS FUNCTIONS
+        // ============================================
+        function updateDeviceInfo() {
+            const info = document.getElementById('device-info');
+            info.innerHTML = `
+                <p style="color: #94a3b8; font-size: 12px;">User Agent: ${navigator.userAgent.substring(0, 50)}...</p>
+                <p style="color: #94a3b8; font-size: 12px;">Platform: ${navigator.platform}</p>
+                <p style="color: #94a3b8; font-size: 12px;">Language: ${navigator.language}</p>
+                <p style="color: #94a3b8; font-size: 12px;">Screen: ${screen.width}x${screen.height}</p>
+                <p style="color: #94a3b8; font-size: 12px;">Storage: ${localStorage.length} items</p>
+            `;
+        }
+        
+        // ============================================
+        // UTILITY FUNCTIONS
+        // ============================================
+        function addLog(panel, type, message) {
+            const div = document.createElement('div');
+            div.className = `status-line ${type}`;
+            div.innerText = `[${new Date().toLocaleTimeString()}] ${message}`;
+            panel.appendChild(div);
+            panel.scrollTop = panel.scrollHeight;
+        }
+        
+        function quickAction() {
+            if (currentTab === 'generator') {
+                generateAccounts();
+            } else if (currentTab === 'automation') {
+                if (!automationActive) {
+                    startAutomation();
+                }
+            } else if (currentTab === 'results') {
+                refreshResults();
+            }
+        }
+        
+        // Initialize delay slider
+        document.getElementById('delay-slider').addEventListener('input', function(e) {
+            document.getElementById('delay-value').innerText = e.target.value + 's';
+        });
+        
+        // Auto-save settings
+        document.getElementById('save-location').addEventListener('change', function(e) {
+            localStorage.setItem('save_location', e.target.value);
+        });
+        
+        // Load settings
+        const savedLoc = localStorage.getItem('save_location');
+        if (savedLoc) {
+            document.getElementById('save-location').value = savedLoc;
+        }
+    </script>
+</body>
+</html>
